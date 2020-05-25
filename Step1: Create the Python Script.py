@@ -68,6 +68,7 @@ class PersonDetect:
     '''
     TODO: This method needs to be completed by you
     '''
+        raw_img = image
         image = preprocess_input(image)
 
         self.infer_request_handle = self.net_plugin.start_async(
@@ -76,7 +77,7 @@ class PersonDetect:
         result = self.exec_network.requests[0].outputs[self.output_name]
         image, current_count = draw_outputs (result, image)
 
-        return image, current_count
+        return raw_img, current_count
     
     def draw_outputs(self, coords, image):
     '''
