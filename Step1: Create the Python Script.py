@@ -341,9 +341,3 @@ if __name__=='__main__':
 ​
 
     main(args)
-
-Next Step
-
-Now that you've run the above cell and created your Python script, you will create your job submission shell script in the next workspace.
-
-Note: As a reminder, if you need to make any changes to the Python script, you can come back to this workspace to edit and run the above cell to overwrite the file with your changes.
