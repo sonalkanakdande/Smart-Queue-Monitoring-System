@@ -59,7 +59,7 @@ class PersonDetect:
     '''
     TODO: This method needs to be completed by you
     '''
-         self.plugin = IECore ()
+        self.plugin = IECore ()
         # Load the IENetwork into the plugin
         self.exec_network = self.plugin.load_network(self.model, self.device)
         return
@@ -68,24 +68,33 @@ class PersonDetect:
     '''
     TODO: This method needs to be completed by you
     '''
-        raise NotImplementedError
+        image = preprocess_input(image)
+
+        self.infer_request_handle = self.net_plugin.start_async(
+            request_id=0, inputs={self.input_name: image})
+
+        result = self.exec_network.requests[0].outputs[self.output_name]
+        image, current_count = draw_outputs (result, image)
+
+        return image, current_count
     
     def draw_outputs(self, coords, image):
     '''
     TODO: This method needs to be completed by you
     '''
         current_count = 0
-		for obj in result[0][0]:
-			# Draw bounding box for object when it's probability is more than
-			#  the specified threshold
-			if obj[2] > prob_threshold:
-				xmin = int(obj[3] * initial_w)
-				ymin = int(obj[4] * initial_h)
-				xmax = int(obj[5] * initial_w)
-				ymax = int(obj[6] * initial_h)
-				cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0, 55, 255), 1)
-				current_count = current_count + 1
-		return frame, current_count
+        for obj in result[0][0]:
+            # Draw bounding box for object when it's probability is more than
+            #  the specified threshold
+            if obj[2] > prob_threshold:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 55, 255), 1)
+                current_count = current_count + 1
+        return image, current_count
+
 
     def preprocess_outputs(self, outputs):
     '''
@@ -97,10 +106,12 @@ class PersonDetect:
     '''
     TODO: This method needs to be completed by you
     '''
-         image=cv2.imread(image)
-		 image=cv2.resize(image, (300,300), interpolation = cv2.INTER_AREA)
-         image=np.moveaxis(image, -1, 0)
-         return image
+        n, c, h, w = self.input_shape
+        image = cv2.resize(frame, (w, h))
+        #Change data layout from HWC to CHW
+        image = image.transpose((2, 0, 1))
+        image = image.reshape((n, c, h, w))	
+        return image
 
 
 def main(args):
@@ -132,8 +143,8 @@ def main(args):
     except Exception as e:
         print("Something else went wrong with the video file: ", e)
     
-    initial_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    initial_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    global initial_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    global initial_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     video_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     out_video = cv2.VideoWriter(os.path.join(output_path, 'output_video.mp4'), cv2.VideoWriter_fourcc(*'avc1'), fps, (initial_w, initial_h), True)
