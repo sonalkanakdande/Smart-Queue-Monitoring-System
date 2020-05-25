@@ -69,21 +69,24 @@ class PersonDetect:
     TODO: This method needs to be completed by you
     '''
         raw_img = image
-        image = preprocess_input(image)
-
+        image = self.preprocess_input(image)
+        
         self.infer_request_handle = self.net_plugin.start_async(
             request_id=0, inputs={self.input_name: image})
 
-        result = self.exec_network.requests[0].outputs[self.output_name]
-        image, current_count = draw_outputs (result, image)
+        infer_status = infer_request_handle.wait()
+        if infer_status == 0:
+            result = self.infer_request_handle.outputs[self.output_name]
+            
+        coords, image = self.draw_outputs (result, image)
 
-        return raw_img, current_count
+        return coords, raw_img
     
     def draw_outputs(self, coords, image):
     '''
     TODO: This method needs to be completed by you
     '''
-        current_count = 0
+        coords = []
         for obj in result[0][0]:
             # Draw bounding box for object when it's probability is more than
             #  the specified threshold
@@ -93,15 +96,8 @@ class PersonDetect:
                 xmax = int(obj[5] * initial_w)
                 ymax = int(obj[6] * initial_h)
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 55, 255), 1)
-                current_count = current_count + 1
-        return image, current_count
-
-
-    def preprocess_outputs(self, outputs):
-    '''
-    TODO: This method needs to be completed by you
-    '''
-        raise NotImplementedError
+                coords.append(obj)
+        return image, coords
 
     def preprocess_input(self, image):
     '''
