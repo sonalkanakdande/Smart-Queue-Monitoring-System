@@ -1,7 +1,5 @@
 %%writefile person_detect.py
 
-​
-
 import numpy as np
 
 import time
@@ -16,9 +14,6 @@ import argparse
 
 import sys
 
-​
-
-​
 
 class Queue:
 
@@ -32,13 +27,11 @@ class Queue:
 
         self.queues=[]
 
-​
 
     def add_queue(self, points):
 
         self.queues.append(points)
-
-​
+        
 
     def get_queues(self, image):
 
@@ -66,9 +59,6 @@ class Queue:
 
         return d
 
-​
-
-​
 
 class PersonDetect:
 
@@ -78,7 +68,6 @@ class PersonDetect:
 
     '''
 
-​
 
     def __init__(self, model_name, device, threshold=0.60):
 
@@ -90,7 +79,6 @@ class PersonDetect:
 
         self.threshold=threshold
 
-​
 
         try:
 
@@ -100,7 +88,6 @@ class PersonDetect:
 
             raise ValueError("Could not Initialise the network. Have you enterred the correct model path?")
 
-​
 
         self.input_name=next(iter(self.model.inputs))
 
@@ -110,7 +97,6 @@ class PersonDetect:
 
         self.output_shape=self.model.outputs[self.output_name].shape
 
-​
 
     def load_model(self):
 
@@ -128,7 +114,6 @@ class PersonDetect:
 
         return
 
-​
 
     def predict(self, image):
 
@@ -143,8 +128,6 @@ class PersonDetect:
         return coords, image
 
     
-
-​
 
     def preprocess_input(self, image):
 
@@ -162,7 +145,6 @@ class PersonDetect:
 
     return image
 
-​
 
  def main(args):
 
@@ -178,7 +160,6 @@ class PersonDetect:
 
     output_path=args.output_path
 
-​
 
     start_model_load_time=time.time()
 
@@ -188,7 +169,6 @@ class PersonDetect:
 
     total_model_load_time = time.time() - start_model_load_time
 
-​
 
     queue=Queue()
 
@@ -206,7 +186,6 @@ class PersonDetect:
 
         print("error loading queue param file")
 
-​
 
     try:
 
@@ -238,7 +217,6 @@ class PersonDetect:
 
     start_inference_time=time.time()
 
-​
 
     try:
 
@@ -287,14 +265,11 @@ class PersonDetect:
             out_video.write(image)
 
             
-
         total_time=time.time()-start_inference_time
 
         total_inference_time=round(total_time, 1)
 
         fps=counter/total_inference_time
-
-​
 
         with open(os.path.join(output_path, 'stats.txt'), 'w') as f:
 
@@ -304,8 +279,6 @@ class PersonDetect:
 
             f.write(str(total_model_load_time)+'\n')
 
-​
-
         cap.release()
 
         cv2.destroyAllWindows()
@@ -313,8 +286,6 @@ class PersonDetect:
     except Exception as e:
 
         print("Could not run Inference: ", e)
-
-​
 
 if __name__=='__main__':
 
@@ -338,6 +309,5 @@ if __name__=='__main__':
 
     args=parser.parse_args()
 
-​
 
     main(args)
