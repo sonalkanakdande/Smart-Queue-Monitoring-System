@@ -1,22 +1,3 @@
-# Step1: Create the Python Script
-
-In the cell below, you will need to complete the Python script and run the cell to generate the file using the magic %%writefile command. Your main task is to complete the following methods for the PersonDetect class:
-
-    load_model
-    predict
-    draw_outputs
-    preprocess_outputs
-    preprocess_inputs
-
-For your reference, here are all the arguments used for the argument parser in the command line:
-
-    --model: The file path of the pre-trained IR model, which has been pre-processed using the model optimizer. There is automated support built in this argument to support both FP32 and FP16 models targeting different hardware.
-    --device: The type of hardware you want to load the model on (CPU, GPU, MYRIAD, HETERO:FPGA,CPU)
-    --video: The file path of the input video.
-    --output_path: The location where the output stats and video file with inference needs to be stored (results/[device]).
-    --max_people: The max number of people in queue before directing a person to another queue.
-    --threshold: The probability threshold value for the person detection. Optional arg; default value is 0.60.
-
 %%writefile person_detect.py
 
 ​
